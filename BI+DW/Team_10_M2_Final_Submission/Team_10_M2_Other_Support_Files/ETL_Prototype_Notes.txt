@@ -1,0 +1,25 @@
+Steps for performing ETL on the Dealer Dim
+
+Based on the mapping spreadsheet, we decided to extract the Dealer table from the Products and Sales Org
+database, and the Owner_Address, Independent, Corporate, Branch, and Website tables from the 
+Corporate database
+
+1. Drop / recreate Dealer staging table from Products
+2. Drop / recreate Dealer staging table from Sales_Org
+3. Drop / recreate Owner_Address staging table from Corporate
+4. Drop / recreate Independent staging table from Corporate
+5. Drop / recreate Corporate staging table from Corporate
+6. Drop / recreate Branch staging table from Corporate
+7. Drop / recreate Website staging table from Corporate
+6. Drop / recreate View Extract_Product_Dealer before staging
+7. Drop / recreate View Extract_SalesOrg_Dealer before staging
+8. Drop / recreate View Extract_Corporate_Owner_Address before staging
+9. Drop / recreate View Extract_Corporate_Branch before staging
+10. Drop / recreate View Extract_Corporate_Independent before staging
+11. Drop / recreate View Extract_Corporate_Corporate before staging
+12. Drop / recreate View Extract_Corporate_Website before staging
+12. Extract from OLTP(Corporate) and load into the staging table
+13. Extract from OLTP(Corporate) and load into the staging table
+14. Drop and recreate view to join the 7 staged tables together
+15. Extract from the view and load into the Dealer DIM in the star schema
+

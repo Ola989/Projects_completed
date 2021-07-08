@@ -1,0 +1,120 @@
+--original
+
+if (exists(select name from sysobjects where name ='Extract_Staged_Dealer' and type = 'V'))
+	begin
+		drop view Extract_Staged_Dealer;
+	end;
+go
+
+create view Extract_Staged_Dealer
+as
+select
+    S_PRO.DLR_Code,
+    S_IND.ID_Name,
+    S_OWN.OADR_Address,
+    S_PRO.DLR_City,
+    S_OWN.OADR_County,
+    S_OWN.OADR_Country,
+    S_PRO.DLR_State,
+    S_BRA.BR_Address,
+    S_BRA.BR_County,
+    S_BRA.BR_Country,
+    S_SAL.DLR_Type,
+    S_WEB.WEB_ID  As DLR_Official_Website_ID,
+    S_WEB.WEB_URL As DLR_Official_WebsiteURL,
+    S_WEB.WEB_Start_Date As DLR_Official_Website_Start_Date,
+    S_WEB.WEB_Admin As DLR_WebsiteAdministrator_Email,
+    S_IND.DLR_Type as DLR_Independent_Or_Corporate,
+    S_IND.DLR_Email as DLR_Email_Address,
+    S_IND.DLR_Since as DLR_Initiation_Date,
+    S_COR.DLR_Type as Corp_DLR_Independent_Or_Corporate,
+    S_COR.DLR_Email as Corp_DLR_Email_Address,
+    S_COR.DLR_Since as Corp_DLR_Initiation_Date
+    
+from   
+    Stage_Corporate_Owner_Address S_OWN,
+    Stage_Corporate_Independent S_IND,
+    Stage_Corporate_Website S_WEB, 
+    Stage_Corporate_Corporate S_COR,
+    Stage_Corporate_Branch S_BRA,  
+    Stage_Product_Dealer S_PRO, 
+    Stage_SalesOrg_Dealer S_SAL 
+where
+  S_OWN.OADR_ID = S_IND.OADR_ID and
+    S_IND.WEB_ID = S_WEB.WEB_ID and
+    S_WEB.WEB_ID = S_COR.WEB_ID and
+    S_COR.BR_ID = S_BRA.BR_ID and
+    S_PRO.DLR_Code = S_COR.DLR_Code and
+    S_COR.DLR_Code = S_SAL.DLR_Code;
+
+go
+
+UNION
+if (exists(select name from sysobjects where name ='Extract_Staged_Dealer' and type = 'V'))
+	begin
+		drop view Extract_Staged_Dealer;
+	end;
+go
+
+create view Extract_Staged_Dealer
+as
+select
+    S_PRO.DLR_Code, 
+    S_PRO.DLR_City,
+    S_PRO.DLR_State,
+    S_PRO.DLR_Zip,
+    S_COR.CD_Name,
+    S_COR.DLR_Type,
+    S_COR.DLR_Email,
+    S_SAL.DLR_Phone,
+    S_SAL.DLR_Type,
+    S_COR.DLR_Since,
+    S_COR.WEB_ID,
+    S_WEB.WEB_URL,
+    S_WEB.WEB_Admin,
+    S_WEB.WEB_Start_Date,
+    S_BRA.BR_Address,
+    S_BRA.BR_County,
+    S_BRA.BR_Country   
+ from   
+    Stage_Product_Dealer S_PRO, 
+    Stage_Corporate_Corporate S_COR,
+    Stage_SalesOrg_Dealer S_SAL,
+    Stage_Corporate_Website S_WEB, 
+    Stage_Corporate_Branch S_BRA   
+where
+  S_PRO.DLR_Code = S_COR.DLR_Code and
+  S_PRO.DLR_Code = S_SAL.DLR_Code and
+ S_COR.WEB_ID = S_WEB.WEB_ID and
+S_COR.BR_ID = S_BRA.BR_ID 
+UNION
+select
+    S_PRO.DLR_Code, 
+    S_PRO.DLR_City,
+    S_PRO.DLR_State,
+    S_PRO.DLR_Zip,
+    S_IND.ID_Name,
+    S_IND.DLR_Type,
+    S_IND.DLR_Email,
+    S_SAL.DLR_Phone,
+    S_SAL.DLR_Type,
+    S_IND.DLR_Since,
+    S_IND.WEB_ID,
+    S_WEB.WEB_URL,
+    S_WEB.WEB_Admin,
+    S_WEB.WEB_Start_Date,
+    S_OWN.OADR_Address,
+    S_OWN.OADR_County,
+    S_OWN.OADR_Country 
+ from   
+    Stage_Product_Dealer S_PRO, 
+    Stage_Corporate_Independent S_IND,
+    Stage_SalesOrg_Dealer S_SAL,
+    Stage_Corporate_Website S_WEB, 
+    Stage_Corporate_Owner_Address S_OWN   
+where
+  S_PRO.DLR_Code = S_IND.DLR_Code and
+  S_PRO.DLR_Code = S_SAL.DLR_Code and
+  S_IND.WEB_ID = S_WEB.WEB_ID and
+  S_IND.OADR_ID = S_OWN.OADR_ID 
+go
